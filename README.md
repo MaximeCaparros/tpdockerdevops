@@ -62,6 +62,11 @@ La commande cp permet de copier les fichiers du container en local
 
 On build le fichier Dockerfile avec le nom nginxfile a la racine de la commande
 
+```
+FROM nginx
+COPY html_directory/ /usr/share/nginx/html
+```
+
 `docker build -t nginxfile .`
 
 Ensuite execute un run
@@ -86,7 +91,7 @@ On lance les conteneurs
 
 `docker run --name my-own-phpmyadmin -d --link some-mysql:db -p 8081:80 phpmyadmin/phpmyadmin`
 
-### Partie 7
+### Partie 8
 
 Dans le fichier docker-compose on mets :
 
@@ -130,4 +135,74 @@ services:
           depends_on:
              - db
 ```
+
+Dans un fichier docker-compose on peut run plusieurs containers.
+
+
+
+### Partie 8
+
+```
+version: '3.7'
+ 
+networks:
+  frontend:
+  backend:
+ 
+volumes:
+  db_data: {}
+ 
+services:
+ 
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - backend
+ 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8181:80"
+    environment:
+       PMA_HOST: db
+       PMA_PORT: 3306
+       PMA_ARBITRARY: 1
+       PMA_USER: wordpress
+       PMA_PASSWORD: wordpress
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - db
+ 
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/wp-php.ini
+      - ./wordpress:/var/www/html
+    ports:
+      - "84:80"
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - frontend
+    depends_on:
+      - db
+```
+
+
+
+
 
