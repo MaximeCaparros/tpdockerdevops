@@ -2,11 +2,15 @@
 
 ---
 
+### Partie 2 
+
+-----
+
 Installer l'image hello-world avec docker et la démarrer
 
 `docker run hello-world`
 
----
+-----
 
 Installation d'une image ubuntu avec comme parametre it pour 'interactif' et bash pour spécifier le langage, ce qui permet de demarrer le conteneur ubuntu et de rentrer directement dedans en bash.
 
@@ -36,7 +40,94 @@ Le paramètre -d permet de lancer un conteneur en mode détaché
 
 `docker run -p -d 80:80 nginx`
 
----
 
 
+### Partie 5
+
+On lance cette commande pour récuperer l'image nginx en local
+
+`docker pull nginx`
+
+Ensuite on lance la commande run avec le paramètre -v pour spécifier le volume (volumelocal:volumecontainer)
+
+`docker run --name servweb --restart unless-stopped -d -p 80:80 -v /home/maxime/docker/nginx/html:/etc/nginx/html  nginx`
+
+La commande cp permet de copier les fichiers du container en local
+
+`docker cp servweb:/etc/nginx/nginx.conf /home/maxime/docker/nginx/html/nginx.conf`
+
+
+
+### Partie 6
+
+On build le fichier Dockerfile avec le nom nginxfile a la racine de la commande
+
+`docker build -t nginxfile .`
+
+Ensuite execute un run
+
+`docker run --name some-nginx -d nginxfile`
+
+On peut observer un facilité d'éxecution avec le dockerfile car on peut remove le container en gardant les paramètres dans le fichier Dockerfile
+
+
+
+### Partie 7
+
+On download en local les images mysql et phpmydadmin
+
+`docker pull mysql:5.7`
+
+`docker pull phpmyadmin/phpmyadmin`
+
+On lance les conteneurs
+
+`docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag`
+
+`docker run --name my-own-phpmyadmin -d --link some-mysql:db -p 8081:80 phpmyadmin/phpmyadmin`
+
+### Partie 7
+
+Dans le fichier docker-compose on mets :
+
+```
+version: '3.7'
+
+networks:
+  mynet:
+
+volumes:
+  db_data: {}
+
+services:
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - mynet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+
+   - "8181:80"
+     environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+            PMA_USER: wordpress
+            PMA_PASSWORD: wordpress
+         networks:
+        - mynet
+          depends_on:
+             - db
+```
 
