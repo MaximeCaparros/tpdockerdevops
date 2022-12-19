@@ -136,11 +136,14 @@ services:
              - db
 ```
 
-Dans un fichier docker-compose on peut run plusieurs containers.
+Le fichier docker-compose.yml permet de définir et d'exécuter plusieurs conteneurs en utilisant une configuration unique. Cela facilite la gestion des conteneurs et leur exécution en production, car on peut définir toutes les options de configuration dans un seul fichier, puis utiliser une seule commande pour exécuter tous les conteneurs.
+
+Cela peut être particulièrement utile lorsque il faut exécuter une application complexe composée de plusieurs conteneurs. Au lieu d'avoir à exécuter plusieurs commandes docker run pour chaque conteneur, on peut définir tous les conteneurs dans un fichier docker-compose.yml et les exécuter en utilisant la commande docker-compose up.
 
 
+Pour configurer les variables dans un conteneur soit on spécifie les variables avec `-e` en executant la commande run soit avec docker on peut spécifier les variables dans la partie environment.
 
-### Partie 8
+### Partie 9
 
 ```
 version: '3.7'
@@ -160,28 +163,14 @@ services:
       - db_data:/var/lib/mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: wordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
     networks:
       - backend
  
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "8181:80"
-    environment:
-       PMA_HOST: db
-       PMA_PORT: 3306
-       PMA_ARBITRARY: 1
-       PMA_USER: wordpress
-       PMA_PASSWORD: wordpress
+ app:
+    image: praqma/network-multitool
     networks:
-      - backend
       - frontend
-    depends_on:
-      - db
+      - backend
  
   wordpress:
     image: wordpress:latest
@@ -202,7 +191,10 @@ services:
       - db
 ```
 
+Avec la commande `docker network inspect 'networkname'` on peut afficher les informations sur le réseau et savoir quels sont les sérvices connecté à eux. Le résultat affichera les adresses IP attribué aux services et au réseau, ainsi que sur les réseaux auxquels chaque service est connecté.
 
+Cette configuration pourrait être utilisée dans un environnement d'application où l'application est divisée en différents services qui communiquent entre eux via des réseaux.
+Cela permet de sécuriser les communications entre ces différents services en limitant les interactions entre eux uniquement aux échanges nécessaires pour l'application.
 
 
 
