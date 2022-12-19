@@ -75,7 +75,7 @@ Ensuite execute un run
 
 On peut observer un facilité d'éxecution avec le dockerfile car on peut remove le container en gardant les paramètres dans le fichier Dockerfile
 
-
+---
 
 ### Partie 7
 
