@@ -56,7 +56,7 @@ La commande cp permet de copier les fichiers du container en local
 
 `docker cp servweb:/etc/nginx/nginx.conf /home/maxime/docker/nginx/html/nginx.conf`
 
-
+---
 
 ### Partie 6
 
@@ -90,6 +90,8 @@ On lance les conteneurs
 `docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag`
 
 `docker run --name my-own-phpmyadmin -d --link some-mysql:db -p 8081:80 phpmyadmin/phpmyadmin`
+
+---
 
 ### Partie 8
 
@@ -142,6 +144,8 @@ Cela peut être particulièrement utile lorsque il faut exécuter une applicatio
 
 
 Pour configurer les variables dans un conteneur soit on spécifie les variables avec `-e` en executant la commande run soit avec docker on peut spécifier les variables dans la partie environment.
+
+---
 
 ### Partie 9
 
